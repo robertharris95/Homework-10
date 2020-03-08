@@ -1,6 +1,5 @@
 //RUN SCHEMA PRIOR TO RUNNING PROGRAM
 
-
 //REQUIREMENTS
 var inquirer = require('inquirer');
 var mysql = require("mysql");
@@ -14,7 +13,7 @@ var connection = mysql.createConnection({
   user: "root",
 
   // Your password
-  password: "",
+  password: "Rh12271995",
   database: "workers_CMS"
 });
 
@@ -67,26 +66,44 @@ inquirer.prompt(
     });
     };
 //READING INFO
+
     if(response.command === 'Read Current Information'){
+        inquirer.prompt(
+            {
+                type:'list',
+                message:'Which table data would you like to view?',
+                name:'table',
+                choices:['Departments', 'Roles', 'Employees']
+            }
+        ).then(function(decision){
+
         //VIEW DEPARTMENTS
+        if(decision.table === 'Departments'){
         readDepartments();
-       
+        };
         //VIEW ROLES
+        if(decision.table === 'Roles'){
         readRoles();
-        
+        };
         //VIEW EMPLOYEES
+        if(decision.table === 'Employees'){
         readEmployees();
+        };
+    });
     };
 //UPDATING DATA
     if(response.command === 'Update Information'){
         //UPDATE EMPLOYEE ROLES
-        updateProduct();
+        updateEmployee();
         }
     });
 
 
 
 //Functions------------------------------------------------------------------------
+
+
+//ADD INFO
 
 //ADD DEPT
 function addDept() {
@@ -188,6 +205,7 @@ function readDepartments() {
     connection.query("SELECT * FROM department", function(err, res) {
     if (err) throw err;
     console.table(res);
+    restart();    
     });
 }
 //VIEW ROLES
@@ -195,6 +213,7 @@ function readRoles() {
     connection.query("SELECT * FROM emprole", function(err, res) {
     if (err) throw err;
     console.table(res);
+    restart();
     });
 }
 //VIEW EMPLOYEES
@@ -202,6 +221,7 @@ function readEmployees() {
     connection.query("SELECT * FROM employee", function(err, res) {
     if (err) throw err;
     console.table(res);
+    restart();
     });
 }
 
@@ -240,6 +260,28 @@ function updateEmployee() {
     );
 });
 readEmployees()
+restart();
 }
 
+//RESTART
+function restart(){
+    inquirer.prompt(
+        {
+            type:'confirm',
+            message:'Would you like to make another request?',
+            name:'confirm'
+
+        }
+    ).then(function(restarter){
+        if (restarter.confirm === true){
+            app();
+        }
+        else{
+            console.log("Thank you!")
+            console.log("Exiting Program...")
+            connection.end()
+            return;
+        }
+    })
+}
 };
