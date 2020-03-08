@@ -1,0 +1,23 @@
+{
+  "name": "homework-10",
+  "version": "1.0.0",
+  "description": "The Tenth Homework for the Rice Full Stack Coding Bootcamp",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/robertharris95/Homework-10.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/robertharris95/Homework-10/issues"
+  },
+  "homepage": "https://github.com/robertharris95/Homework-10#readme",
+  "dependencies": {
+    "inquirer": "^7.0.6",
+    "mysql": "^2.18.1"
+  }
+}
