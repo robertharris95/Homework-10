@@ -28,7 +28,7 @@ connection.connect(function(err) {
 
 //APPLICATION
 function app(){
-
+readAll();
 //Initial Data Pull
 var employees = [];
 var roles = [];
@@ -79,7 +79,7 @@ inquirer.prompt(
                 type:'list',
                 message:'Which table data would you like to view?',
                 name:'table',
-                choices:['Departments', 'Roles', 'Employees']
+                choices:['Departments', 'Roles', 'Employees','All']
             }
         ).then(function(decision){
 
@@ -94,6 +94,10 @@ inquirer.prompt(
         //VIEW EMPLOYEES
         if(decision.table === 'Employees'){
         readEmployees();
+        };
+        if(decision.table === 'All'){
+        readAll();
+        restart();
         };
     });
     };
@@ -234,6 +238,19 @@ function readEmployees() {
     if (err) throw err;
     console.table(res);
     restart();
+    });
+}
+//VIEW ALL DATA
+function readAll() {
+    connection.query(`
+    SELECT title, salary , department_id
+    FROM emprole
+    JOIN employee
+    ON emprole.id=employee.role_id;`, function(err, res) {
+    if (err) throw err;
+    console.log("")
+    console.log("---------------------------------------------------------------------------")
+    console.table(res);
     });
 }
 
