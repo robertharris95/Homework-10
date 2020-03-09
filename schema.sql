@@ -21,7 +21,25 @@ CREATE TABLE employee(
 id INT NOT NULL AUTO_INCREMENT
 ,first_name VARCHAR(30) NOT NULL
 ,last_name VARCHAR(30) NOT NULL
-,role_id INT NOT NULL
+,role VARCHAR(30) NOT NULL
+,manager VARCHAR(30)
+,role_id INT 
 ,manager_id INT
 ,PRIMARY KEY (id)
 );
+
+INSERT INTO employee (first_name, last_name, role, manager, role_id, manager_id)
+VALUES('N/A', 'N/A', 'N/A', 'N/A', 0, 0);
+
+SELECT deptname
+FROM department
+JOIN emprole
+ON department.id=emprole.department_id;
+
+SELECT title, salary , department_id
+FROM emprole
+JOIN employee
+ON emprole.id=employee.role_id;
+
+SELECT * FROM employee;
+

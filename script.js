@@ -40,7 +40,7 @@ inquirer.prompt(
         type:'list',
         name:'command',
         message:'What would you like to do?',
-        choices: ['Add information', 'Update Information', 'Read Current Information']
+        choices: ['Add information', 'Update Information', 'Read Current Information','Exit']
     }
 ).then(function(response){
     //ADDING INFO FUNCTIONS
@@ -102,9 +102,13 @@ inquirer.prompt(
         //UPDATE EMPLOYEE ROLES
         updateEmployee();
         }
-    });
+    
+//EXITING
+    if(response.command === 'Exit'){
+        exit();
+    }
 
-
+});
 
 //Functions------------------------------------------------------------------------
 
@@ -179,12 +183,14 @@ function addEmployee() {
             name:'last',
         },
         {
-            message:'What is the new employee role id',
-            name:'roleid',
+            message:'What is the new employee role',
+            name:'role',
         },
         {
-            message:'What is the new employee managers id?',
+            type:'list',
+            message:'What is the new employee manager?',
             name:'manager',
+            choices:employees
         }
     ]).then(function(newdata){
     var query = connection.query(
@@ -192,8 +198,8 @@ function addEmployee() {
     {
         first_name: newdata.first,
         last_name: newdata.last,
-        role_id: newdata.roleid,
-        manager_id: newdata.manager,
+        role: newdata.role,
+        manager: newdata.manager,
     },
     function(err, res) {
         if (err) throw err;
@@ -253,7 +259,7 @@ function updateEmployee() {
         "UPDATE employee SET ? WHERE ?",
         [
         {
-            role_id: newdata.newrole
+            role: newdata.newrole
         },
         {
             first_name: newdata.person
@@ -263,7 +269,6 @@ function updateEmployee() {
         if (err) throw err;
         console.log(res.affectedRows + " employee updated!\n");
         readEmployees();
-        restart();
         }
     );
 });
@@ -285,10 +290,7 @@ function restart(){
             app();
         }
         else{
-            console.log("Thank you!")
-            console.log("Exiting Program...")
-            connection.end()
-            return;
+            exit();
         }
     })
 }
@@ -297,25 +299,29 @@ function restart(){
 function datapull(){
     function initialreadRoles() {
         connection.query("SELECT title FROM emprole", function(err, res) {
-        if (err) throw err;
-        // console.log(res.title); 
+        if (err) throw err; 
         for(let i=0; i<res.length; i++){
         roles.push(res[i].title);
         };
-        // console.log(roles)
         });
     }
     function initialreadEmployees() {
         connection.query("SELECT first_name FROM employee", function(err, res) {
         if (err) throw err;
-        // console.log(res.first_name , res.last_name);
         for(let i=0; i<res.length; i++){  
         employees.push(res[i].first_name);
         }
-        // console.log(employees)
         });
     }
     initialreadRoles();
     initialreadEmployees();
 }
+};
+//----------------------------------------------------------------------------------------------
+//EXIT FUNCTION
+function exit(){
+    console.log("Thank you!")
+    console.log("Exiting Program...")
+    connection.end()
+    return;
 };
