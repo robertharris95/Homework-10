@@ -28,6 +28,12 @@ connection.connect(function(err) {
 
 //APPLICATION
 function app(){
+
+//Initial Data Pull
+var employees = [];
+var roles = [];
+datapull();
+
 //Initial Question
 inquirer.prompt(
     {
@@ -149,7 +155,7 @@ function addRole() {
     {
         title: newdata.newrole,
         salary: newdata.newpay,
-        dept_id: newdata.newdeptid
+        department_id: newdata.newdeptid
     },
     function(err, res) {
         if (err) throw err;
@@ -234,13 +240,13 @@ function updateEmployee() {
             type:"list",
             message:"Who's role would you like to update?",
             name:"person",
-            choices:[]
+            choices: employees
         },
         {
             type:"list",
             message:"What is their new role?",
             name:"newrole",
-            choices:[]
+            choices: roles
         }
 ]).then(function(newdata){ 
         var query = connection.query(
@@ -250,19 +256,21 @@ function updateEmployee() {
             role_id: newdata.newrole
         },
         {
-            id: newdata.person
+            first_name: newdata.person
         }
         ],
         function(err, res) {
         if (err) throw err;
         console.log(res.affectedRows + " employee updated!\n");
+        readEmployees();
+        restart();
         }
     );
 });
-readEmployees()
-restart();
+
 }
 
+//--------------------------------------------------------------------------------------
 //RESTART
 function restart(){
     inquirer.prompt(
@@ -283,5 +291,31 @@ function restart(){
             return;
         }
     })
+}
+//----------------------------------------------------------------------------------------
+//INITIAL DATA PULL
+function datapull(){
+    function initialreadRoles() {
+        connection.query("SELECT title FROM emprole", function(err, res) {
+        if (err) throw err;
+        // console.log(res.title); 
+        for(let i=0; i<res.length; i++){
+        roles.push(res[i].title);
+        };
+        // console.log(roles)
+        });
+    }
+    function initialreadEmployees() {
+        connection.query("SELECT first_name FROM employee", function(err, res) {
+        if (err) throw err;
+        // console.log(res.first_name , res.last_name);
+        for(let i=0; i<res.length; i++){  
+        employees.push(res[i].first_name);
+        }
+        // console.log(employees)
+        });
+    }
+    initialreadRoles();
+    initialreadEmployees();
 }
 };
